@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.ui.Alignment
@@ -15,33 +17,26 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            //Row
-            Row(
+            Column(
                 modifier = Modifier
-                    .width(300.dp)
-                    .fillMaxHeight(0.7f)
-                    .background(Color.Green),
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("Hello")
-                Text("World")
-                Text("!!")
-            }
-
-            //Column
-//            Column(
-//                modifier = Modifier
+                    .background(Color.Green)
+                    .fillMaxHeight(0.5f)
+                    .fillMaxWidth()
+                    .border(5.dp, Color.Magenta)
+                    .padding(16.dp)
+                    .border(5.dp, Color.Blue)
+                    .padding(16.dp)
+                    .border(5.dp, Color.Red)
+                    .padding(10.dp)
 //                    .width(300.dp)
-//                    .fillMaxHeight(0.7f)
-//                    .background(Color.Green),
-//                verticalArrangement = Arrangement.SpaceAround,
-//                horizontalAlignment = Alignment.CenterHorizontally
-//            ) {
-//                Text("Hello")
-//                Text("World")
-//                Text("!!")
-//            }
+//                    .requiredWidth(600.dp)
+            ){
+                Text("Hello", modifier = Modifier.clickable {
+
+                })
+                Spacer(modifier = Modifier.height(50.dp))
+                Text("World")
+            }
 
         }
     }
