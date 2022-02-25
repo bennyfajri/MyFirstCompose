@@ -2,6 +2,8 @@ package com.myfirstcompose
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,42 +24,52 @@ import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            val constraints = ConstraintSet {
-                val greenBox = createRefFor("greenbox")
-                val redBox = createRefFor("redbox")
-                val guideline = createGuidelineFromTop(0.5f)
-
-                constrain(greenBox) {
-                    top.linkTo(guideline)
-                    start.linkTo(parent.start)
-                    width = Dimension.value(100.dp)
-                    height = Dimension.value(100.dp)
-                }
-                constrain(redBox) {
-                    top.linkTo(parent.top)
-                    start.linkTo(greenBox.end)
-                    end.linkTo(parent.end)
-                    width = Dimension.value(100.dp)
-                    height = Dimension.value(100.dp)
-                }
-                createHorizontalChain(greenBox, redBox, chainStyle = ChainStyle.Packed)
-            }
-            ConstraintLayout(constraints, modifier = Modifier.fillMaxSize()) {
-                Box(modifier = Modifier
-                    .background(Color.Green)
-                    .layoutId("greenbox")
-                )
-                Box(modifier = Modifier
-                    .background(Color.Red)
-                    .layoutId("redbox")
-                )
-            }
+         setContent {
+            val scaffoldState = rememberScaffoldState()
+             val scope = rememberCoroutineScope()
+           Scaffold(scaffoldState = scaffoldState) {
+               var counter by remember {
+                   mutableStateOf(0)
+               }
+               if(counter % 5 == 0 && counter > 0) {
+                   LaunchedEffect(key1 = scaffoldState.snackbarHostState) {
+                       scaffoldState.snackbarHostState.showSnackbar("Hello")
+                   }
+               }
+               Button(onClick = { counter++ }) {
+                   Text(text = "Click me: $counter")
+               }
+           }
         }
     }
 
 }
+
+//var i = 0
+//
+//@Composable
+//fun myComposable(backPressedDispatcher: OnBackPressedDispatcher) {
+//
+//    val callback = remember {
+//        object : OnBackPressedCallback(true) {
+//            override fun handleOnBackPressed() {
+//                // Do something
+//            }
+//        }
+//    }
+//
+//    DisposableEffect(key1 = backPressedDispatcher) {
+//        backPressedDispatcher.addCallback(callback)
+//        onDispose {
+//            callback.remove()
+//        }
+//    }
+//    Button(onClick = { /*TODO*/ }) {
+//        Text(text = "Click me")
+//    }
+//}
