@@ -1,27 +1,21 @@
 package com.myfirstcompose
 
 import android.os.Bundle
+import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.runtime.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -29,20 +23,72 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Surface(
-                color = Color(0xFF101010),
-                modifier = Modifier.fillMaxSize()
+            var panjangState by remember {
+                mutableStateOf("")
+            }
+            var lebarState by remember {
+                mutableStateOf("")
+            }
+            var hasilState by remember {
+                mutableStateOf(0)
+            }
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(
+                        title = {
+                            Text(text = "Persegi Panjang")
+                        }
+                    )
+                }
             ) {
-                DropDown(
-                    text = "Hello World!",
-                    modifier = Modifier.padding(16.dp)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
                 ) {
+                    TextField(
+                        value = panjangState,
+                        label = {
+                            Text(text = "Panjang")
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
+                        onValueChange = {
+                            panjangState = it
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    TextField(
+                        value = lebarState,
+                        label = {
+                            Text(text = "Lebar")
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
+                        onValueChange = {
+                            lebarState = it
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.padding(16.dp))
+                    Button(
+                        onClick = {
+                            hasilState = panjangState.toInt() * lebarState.toInt()
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = "Hitung")
+                    }
+                    Spacer(modifier = Modifier.padding(16.dp))
                     Text(
-                        text = "This is now revealed!",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp)
-                            .background(Color.Green)
+                        text = hasilState.toString(), style = TextStyle(
+                            fontSize = 22.sp,
+                            color = Color.Black
+                        )
                     )
                 }
             }
@@ -50,63 +96,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun DropDown(
-    text: String,
-    modifier: Modifier = Modifier,
-    initiallyOpened: Boolean = false,
-    content: @Composable () -> Unit
-) {
-    var isOpen by remember {
-        mutableStateOf(initiallyOpened)
-    }
-    val alpha = animateFloatAsState(
-        targetValue = if (isOpen) 1f else 0f,
-        animationSpec = tween(
-            durationMillis = 300
-        )
-    )
-    val rotateX = animateFloatAsState(
-        targetValue = if (isOpen) 0f else -90f,
-        animationSpec = tween(
-            durationMillis = 300
-        )
-    )
-    Column(modifier = modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = text,
-                color = Color.White,
-                fontSize = 16.sp
-            )
-            Icon(
-                imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = "Open or close the drop down",
-                tint = Color.White,
-                modifier = Modifier
-                    .clickable {
-                        isOpen = !isOpen
-                    }
-                    .scale(1f, if (isOpen) -1f else 1f)
-
-            )
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .graphicsLayer {
-                    transformOrigin = TransformOrigin(5f, 0f)
-                    rotationX = rotateX.value
-                }
-                .alpha(alpha.value)
-        ) {
-            content()
-        }
-    }
-}
